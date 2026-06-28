@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safety Observation — Construction Site</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #17181A;
+  --surface: #1F2123;
+  --surface-2: #26292B;
+  --border: #34373A;
+  --yellow: #FFC700;
+  --red: #E1392B;
+  --red-dim: #3A1F1D;
+  --amber: #E8950C;
+  --amber-dim: #3A2D14;
+  --green: #3FA34D;
+  --green-dim: #1C2E1F;
+  --text: #F2F0EA;
+  --text-muted: #9B9C97;
+  --text-faint: #6E6F6B;
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 5px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); min-height: 100vh; }
+
+.hazard-stripe {
+  height: 7px;
+  background: repeating-linear-gradient(45deg, var(--yellow) 0 12px, #111 12px 24px);
+}
+
+.app { max-width: 540px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── HEADER ── */
+header { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
+.eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: .15em; color: var(--yellow); text-transform: uppercase; margin-bottom: 4px; }
+header h1 { font-family: var(--font-display); font-size: 24px; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; line-height: 1.1; }
+header p { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+
+/* ── SETUP BANNER ── */
+.setup-banner {
+  background: var(--surface);
+  border: 1px solid var(--amber);
+  border-radius: var(--radius);
+  margin: 16px 20px;
+  padding: 14px 16px;
+}
+.setup-banner h3 { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--amber); margin-bottom: 8px; }
+.setup-banner input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  border-radius: 4px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px; margin-bottom: 8px;
+}
+.setup-banner input::placeholder { color: var(--text-faint); }
+.setup-banner input.saved { border-color: var(--green); }
+.setup-banner .hint { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+.setup-banner .hint a { color: var(--yellow); }
+.btn-save-url { background: var(--yellow); color: #1A1500; border: none; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 9px 16px; border-radius: 4px; cursor: pointer; }
+
+/* ── FORM ── */
+main { flex: 1; padding: 16px 20px 32px; }
+.section-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--yellow); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin: 20px 0 14px;
+}
+.section-label:first-child { margin-top: 0; }
+
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+input[type=text], input[type=date], input[type=time], input[type=email], select, textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  border-radius: var(--radius); padding: 11px 12px; font-family: var(--font-body); font-size: 14px;
+  appearance: none; -webkit-appearance: none;
+}
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239B9C97' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+input::placeholder, textarea::placeholder { color: var(--text-faint); }
+textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+input.invalid, select.invalid, textarea.invalid, .chips-wrap.invalid { border: 1px solid var(--red) !important; border-radius: var(--radius); }
+
+/* ── CHIPS ── */
+.chips-wrap { display: flex; flex-wrap: wrap; gap: 8px; padding: 2px; border: 1px solid transparent; border-radius: var(--radius); }
+.chip { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; font-family: var(--font-body); padding: 8px 14px; border-radius: 20px; cursor: pointer; transition: all .15s; user-select: none; }
+.chip:hover { border-color: var(--text-muted); color: var(--text); }
+.chip.active { background: var(--yellow); border-color: var(--yellow); color: #1A1500; font-weight: 600; }
+
+/* ── RISK BUTTONS ── */
+.risk-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.risk-btn { font-family: var(--font-mono); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; padding: 13px 0; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); text-align: center; transition: all .15s; }
+.risk-btn[data-r=low]    { border-color: var(--green); color: var(--green); }
+.risk-btn[data-r=medium] { border-color: var(--amber); color: var(--amber); }
+.risk-btn[data-r=high]   { border-color: var(--red);   color: var(--red);   }
+.risk-btn.active[data-r=low]    { background: var(--green); color: #0B1A0E; }
+.risk-btn.active[data-r=medium] { background: var(--amber); color: #211802; }
+.risk-btn.active[data-r=high]   { background: var(--red);   color: #fff;    }
+
+/* ── PHOTO ── */
+.photo-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.photo-thumb { position: relative; width: 80px; height: 80px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-thumb .del { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; background: rgba(0,0,0,.7); border: none; color: #fff; border-radius: 50%; font-size: 13px; line-height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.photo-add { width: 80px; height: 80px; border: 1px dashed var(--border); border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; cursor: pointer; gap: 3px; }
+.photo-add input { display: none; }
+.hint-text { font-size: 11px; color: var(--text-faint); margin-top: 5px; }
+
+/* ── SUBMIT ── */
+.submit-btn {
+  width: 100%; background: var(--yellow); color: #1A1500; border: none;
+  font-family: var(--font-display); font-weight: 700; font-size: 17px;
+  text-transform: uppercase; letter-spacing: .04em; padding: 17px 0;
+  border-radius: var(--radius); cursor: pointer; margin-top: 8px; transition: opacity .2s;
+}
+.submit-btn:disabled { opacity: .55; cursor: default; }
+
+/* ── SUCCESS SCREEN ── */
+.success-screen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 70vh; padding: 40px 24px; text-align: center;
+}
+.success-screen.show { display: flex; }
+.tick { width: 64px; height: 64px; background: var(--green-dim); border: 2px solid var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 20px; }
+.success-screen h2 { font-family: var(--font-display); font-size: 22px; text-transform: uppercase; margin-bottom: 8px; }
+.success-screen p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
+.btn-another { margin-top: 24px; background: none; border: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; padding: 12px 24px; border-radius: var(--radius); cursor: pointer; }
+
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 12px 18px; border-radius: 6px; font-size: 13px; max-width: 90%; text-align: center; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 99; }
+#toast.show { opacity: 1; }
+#toast.error { border-color: var(--red); color: var(--red); }
+#toast.ok { border-color: var(--green); color: var(--green); }
+
+@media (min-width: 560px) {
+  .app { border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hazard-stripe"></div>
+  <header>
+    <div class="eyebrow">Construction Site Safety</div>
+    <h1>Safety Observation<br>Field Report</h1>
+    <p>Complete all required fields and submit. Data saves to your Google Sheet.</p>
+  </header>
+
+  <!-- SETUP BANNER -->
+  <div class="setup-banner" id="setupBanner">
+    <h3>⚠ Admin Setup Required</h3>
+    <input type="text" id="scriptUrlInput" placeholder="Paste your Google Apps Script Web App URL here…">
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+      <button class="btn-save-url" onclick="saveScriptUrl()">Save URL</button>
+      <span id="urlStatus" style="font-size:11px;color:var(--text-muted);"></span>
+    </div>
+    <div class="hint">
+      See setup guide below the form. Once the URL is saved, this banner disappears for all users on this device.
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <main id="formSection">
+    <div id="formWrap">
+
+      <div class="section-label">Observer Information</div>
+
+      <div class="field">
+        <label>Observer Name <span style="color:var(--red)">*</span></label>
+        <input type="text" id="observerName" placeholder="Full name" required>
+      </div>
+
+      <div class="field row2">
+        <div>
+          <label>Employee No. <span style="color:var(--red)">*</span></label>
+          <input type="text" id="empNumber" placeholder="e.g. EMP-1042" required>
+        </div>
+        <div>
+          <label>Designation <span style="color:var(--red)">*</span></label>
+          <input type="text" id="designation" placeholder="e.g. Foreman" required>
+        </div>
+      </div>
+
+      <div class="section-label">Observation Details</div>
+
+      <div class="field row2">
+        <div>
+          <label>Date <span style="color:var(--red)">*</span></label>
+          <input type="date" id="obsDate" required>
+        </div>
+        <div>
+          <label>Time <span style="color:var(--red)">*</span></label>
+          <input type="time" id="obsTime" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Location / Area <span style="color:var(--red)">*</span></label>
+        <input type="text" id="location" placeholder="e.g. Block A – Level 3, Scaffold Zone" required>
+      </div>
+
+      <div class="field">
+        <label>Observation Type <span style="color:var(--red)">*</span></label>
+        <div class="chips-wrap" id="obsTypeGroup">
+          <div class="chip" data-v="Unsafe Act">Unsafe Act</div>
+          <div class="chip" data-v="Unsafe Condition">Unsafe Condition</div>
+          <div class="chip" data-v="Near Miss">Near Miss</div>
+          <div class="chip" data-v="Positive Observation">Positive Observation</div>
+          <div class="chip" data-v="Property Damage">Property Damage</div>
+          <div class="chip" data-v="Environmental">Environmental</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Risk Level <span style="color:var(--red)">*</span></label>
+        <div class="risk-grid" id="riskGroup">
+          <div class="risk-btn" data-r="low">Low</div>
+          <div class="risk-btn" data-r="medium">Medium</div>
+          <div class="risk-btn" data-r="high">High</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>What did you observe? <span style="color:var(--red)">*</span></label>
+        <textarea id="description" rows="4" placeholder="Describe the hazard, unsafe act, or condition. Include who was involved and any equipment or materials." required></textarea>
+      </div>
+
+      <div class="field">
+        <label>Immediate Action Taken</label>
+        <textarea id="immediateAction" rows="2" placeholder="What was done on the spot to address the hazard? (optional)"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Recommended Corrective Action</label>
+        <textarea id="correctiveAction" rows="2" placeholder="What further action is recommended? (optional)"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Work Activity / Trade</label>
+        <select id="workActivity">
+          <option value="">— Select —</option>
+          <option>Excavation & Earthworks</option>
+          <option>Concrete Works</option>
+          <option>Steel Erection</option>
+          <option>Scaffolding</option>
+          <option>Electrical</option>
+          <option>Plumbing & Mechanical</option>
+          <option>Roofing</option>
+          <option>Finishing Works</option>
+          <option>Crane & Lifting</option>
+          <option>Demolition</option>
+          <option>General Construction</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Photo Evidence <span style="font-weight:400;text-transform:none;font-size:10px;">(optional, max 3)</span></label>
+        <div class="photo-row" id="photoRow">
+          <label class="photo-add" id="photoAddBtn">
+            <span style="font-size:24px;line-height:1">+</span>
+            <span>Add Photo</span>
+            <input type="file" id="photoInput" accept="image/*" capture="environment">
+          </label>
+        </div>
+        <div class="hint-text">Photos are attached as links in the spreadsheet.</div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitForm()">Submit Observation</button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="tick">✓</div>
+      <h2>Observation Submitted</h2>
+      <p>Your report has been recorded in the safety log. Thank you for keeping the site safe.</p>
+      <button class="btn-another" onclick="resetForm()">Submit Another</button>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ──
+let obsType = '';
+let riskLevel = '';
+let photos = []; // base64 strings
+
+// ── SCRIPT URL PERSISTENCE ──
+const SCRIPT_KEY = 'safetyFormScriptUrl';
+
+function saveScriptUrl() {
+  const val = document.getElementById('scriptUrlInput').value.trim();
+  if (!val.startsWith('https://')) { toast('Paste a valid https:// URL', 'error'); return; }
+  localStorage.setItem(SCRIPT_KEY, val);
+  document.getElementById('urlStatus').textContent = '✓ Saved';
+  document.getElementById('scriptUrlInput').classList.add('saved');
+  setTimeout(() => document.getElementById('setupBanner').style.display = 'none', 800);
+}
+
+function getScriptUrl() {
+  // Hardcoded URL — no manual entry needed for workers
+  const HARDCODED = 'https://script.google.com/macros/s/AKfycbx14hIQtdPzKb2QvhpciLK6pXB4ewn5imb15Czt2wQKav-nXHxUMuw_9hHdw1b3hDoduA/exec';
+  return localStorage.getItem(SCRIPT_KEY) || HARDCODED;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Always hide banner — URL is hardcoded
+  document.getElementById('setupBanner').style.display = 'none';
+  const saved = getScriptUrl();
+  if (saved) {
+    document.getElementById('scriptUrlInput').value = saved;
+  }
+  // Set today's date & current time
+  const now = new Date();
+  document.getElementById('obsDate').value = now.toISOString().slice(0,10);
+  document.getElementById('obsTime').value = now.toTimeString().slice(0,5);
+});
+
+// ── CHIPS ──
+document.getElementById('obsTypeGroup').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('#obsTypeGroup .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  obsType = chip.dataset.v;
+  document.getElementById('obsTypeGroup').classList.remove('invalid');
+});
+
+// ── RISK ──
+document.getElementById('riskGroup').addEventListener('click', e => {
+  const btn = e.target.closest('.risk-btn');
+  if (!btn) return;
+  document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  riskLevel = btn.dataset.r;
+});
+
+// ── PHOTOS ──
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const max = 900;
+        let w = img.width, h = img.height;
+        if (w > h && w > max) { h = Math.round(h * max / w); w = max; }
+        else if (h > max) { w = Math.round(w * max / h); h = max; }
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', 0.55));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPhotos() {
+  const row = document.getElementById('photoRow');
+  row.querySelectorAll('.photo-thumb').forEach(el => el.remove());
+  photos.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'photo-thumb';
+    div.innerHTML = `<img src="${p}"><button class="del" onclick="removePhoto(${i})">×</button>`;
+    row.insertBefore(div, document.getElementById('photoAddBtn'));
+  });
+  document.getElementById('photoAddBtn').style.display = photos.length >= 3 ? 'none' : 'flex';
+}
+
+function removePhoto(i) { photos.splice(i, 1); renderPhotos(); }
+
+document.getElementById('photoInput').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const c = await compressImage(file);
+    if (photos.length < 3) photos.push(c);
+    renderPhotos();
+  } catch { toast("Couldn't read photo. Try another.", 'error'); }
+  e.target.value = '';
+});
+
+// ── VALIDATION ──
+function validate() {
+  let ok = true;
+  const req = [
+    ['observerName', 'text'],
+    ['empNumber', 'text'],
+    ['designation', 'text'],
+    ['obsDate', 'text'],
+    ['obsTime', 'text'],
+    ['location', 'text'],
+    ['description', 'text'],
+  ];
+  req.forEach(([id]) => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.classList.add('invalid'); ok = false; }
+    else el.classList.remove('invalid');
+  });
+  if (!obsType) { document.getElementById('obsTypeGroup').classList.add('invalid'); ok = false; }
+  if (!riskLevel) {
+    document.getElementById('riskGroup').style.outline = '1px solid var(--red)';
+    ok = false;
+  } else {
+    document.getElementById('riskGroup').style.outline = '';
+  }
+  return ok;
+}
+
+// ── GET SUBMIT (most reliable method for Google Apps Script) ──
+function submitViaIframe(url, payload) {
+  return new Promise((resolve, reject) => {
+    const params = new URLSearchParams();
+    Object.entries(payload).forEach(([k, v]) => params.append(k, String(v)));
+    const fullUrl = url + '?' + params.toString();
+
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => resolve(); // Google Apps Script returns redirect, triggers onerror — still works
+    img.src = fullUrl;
+
+    // Fallback after 6 seconds
+    setTimeout(() => resolve(), 6000);
+  });
+}
+
+// ── SUBMIT ──
+async function submitForm() {
+  if (!validate()) { toast('Please fill all required fields.', 'error'); return; }
+  const url = getScriptUrl();
+  if (!url) { toast('Admin: paste the Apps Script URL in the setup banner first.', 'error'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const payload = {
+    observerName: document.getElementById('observerName').value.trim(),
+    empNumber:    document.getElementById('empNumber').value.trim(),
+    designation:  document.getElementById('designation').value.trim(),
+    date:         document.getElementById('obsDate').value,
+    time:         document.getElementById('obsTime').value,
+    location:     document.getElementById('location').value.trim(),
+    obsType,
+    riskLevel,
+    description:       document.getElementById('description').value.trim(),
+    immediateAction:   document.getElementById('immediateAction').value.trim(),
+    correctiveAction:  document.getElementById('correctiveAction').value.trim(),
+    workActivity:      document.getElementById('workActivity').value,
+    photoCount:        photos.length,
+    submittedAt:       new Date().toISOString()
+  };
+
+  try {
+    // Use iframe trick to avoid CORS issues with Google Apps Script
+    await submitViaIframe(url, payload);
+    document.getElementById('formWrap').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+  } catch (err) {
+    console.error('Error: ', err);
+    toast('Submission failed. Check your connection and try again.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit Observation';
+  }
+}
+
+// ── RESET ──
+function resetForm() {
+  document.getElementById('observerName').value = '';
+  document.getElementById('empNumber').value = '';
+  document.getElementById('designation').value = '';
+  document.getElementById('location').value = '';
+  document.getElementById('description').value = '';
+  document.getElementById('immediateAction').value = '';
+  document.getElementById('correctiveAction').value = '';
+  document.getElementById('workActivity').value = '';
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.risk-btn').forEach(b => b.classList.remove('active'));
+  obsType = ''; riskLevel = ''; photos = [];
+  renderPhotos();
+  const now = new Date();
+  document.getElementById('obsDate').value = now.toISOString().slice(0,10);
+  document.getElementById('obsTime').value = now.toTimeString().slice(0,5);
+  document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+  document.getElementById('formWrap').style.display = 'block';
+  document.getElementById('successScreen').classList.remove('show');
+  window.scrollTo(0,0);
+}
+
+// ── TOAST ──
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
